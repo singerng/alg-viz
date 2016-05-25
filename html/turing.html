@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Turing Machine Visualizer</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css">
+		<script type="text/javascript" src="../js/turing.js"></script>
+        <script type="text/javascript">
+            
+            /* Turing machine. */
+            var start = "a";
+            var accept = "d";
+            var dictionary = {}; 
+                dictionary[["a", 1]] = ["b", 0, L];
+                dictionary[["a", 0]] = ["d", 0];
+                dictionary[["b", 1]] = ["b", 0, L];
+                dictionary[["b", 0]] = ["c", 1];
+                dictionary[["c", 0]] = ["a", 0, L];
+                dictionary[["c", 1]] = ["a", 1, R];
+            var tape = [0, 1, 0, 0, 1, 1, 1, 0, 1];
+            var head = 4;
+            var machine = new TuringMachine(start, accept, dictionary, tape, head);            
+        
+        
+
+        
+        </script>
+    </head>
+	<body>
+        <div id="tape"></div>
+        <div style="clear: both;">HEAD</div>
+        <script type="text/javascript">
+            
+            /* Display. */
+            var row = document.getElementById("tape");
+            for (var i = 0; i < tape.length; i++) {
+                var div = document.createElement("div");
+                div.innerHTML = tape[i];
+                row.appendChild(div);
+            }
+            
+            /* Event listener. */
+            document.addEventListener("mousedown", function(event) {
+                row.style.transform = "translate(-65px)"
+            });
+            
+        </script>
+	</body>
+</html>

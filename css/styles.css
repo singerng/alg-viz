@@ -1,0 +1,21 @@
+body {
+    text-align: center;
+}
+
+#tape {
+    text-align: center;
+    position: relative;
+    transition: 1s ease-in-out;
+}
+
+#tape div {
+    width: 64px;
+    height: 64px;
+    border: 1px solid black;
+    border-right: none;
+    display: inline-block;
+}
+
+#tape div:last-of-type {
+    border: 1px solid black;
+}
