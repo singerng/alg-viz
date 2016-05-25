@@ -1,6 +1,7 @@
-/** Direction constants. */
-var L = -1;
-var R = 1;
+function error() {}
+function move() {}
+function value() {}
+function state() {}
 
 /** The main turing machine object. */
 function TuringMachine(start, accept, dictionary, tape, head) {
@@ -10,13 +11,10 @@ function TuringMachine(start, accept, dictionary, tape, head) {
     this.accept = accept;
     this.dictionary = dictionary;
     
-    /** Cached last direction. */
-    var direction = 0;
-    
     /** Convert the tape to an object. */
     if (tape.constructor === Array) {
         var t = this.tape = {};
-        tape.map((s, i) => { t[i] = s; }); 
+        tape.map(function(s, i) { t[i] = s; }); 
     } else this.tape = tape;
     
     /** Internal tracking. */
@@ -26,12 +24,21 @@ function TuringMachine(start, accept, dictionary, tape, head) {
     /** Step forward. */
     this.step = function() {
         
-        /* Get the current instructions. */
-        var next = this.dictionary[[this.state, this.tape[this.head] || null]];
-        console.log(this.state, this.tape[this.head], next);
+        /* Cancel if finished. */
+        if (this.state == this.accept) return;
+        
+        /* Get the next instructions. */
+        var next = this.dictionary[[this.state, this.tape[this.head]]];
+        if (!next) { error(); return; }
+        
         this.state = next[0];
+        state(next[0]);
+        
         this.tape[this.head] = next[1];
-        this.head += (direction = next[2]) || direction;
+        value(this.head, next[1]);        
+        
+        this.head += next[2] || 0;
+        move(this.head);
         
     }
     

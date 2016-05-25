@@ -6,6 +6,10 @@
 		<script type="text/javascript" src="../js/turing.js"></script>
         <script type="text/javascript">
             
+            /** Direction constants. */
+            var L = -1;
+            var R = 1;
+            
             /* Turing machine. */
             var start = "a";
             var accept = "d";
@@ -18,29 +22,67 @@
                 dictionary[["c", 1]] = ["a", 1, R];
             var tape = [0, 1, 0, 0, 1, 1, 1, 0, 1];
             var head = 4;
-            var machine = new TuringMachine(start, accept, dictionary, tape, head);            
-        
-        
-
-        
+            var machine = new TuringMachine(start, accept, dictionary, tape, head);
+            
         </script>
     </head>
 	<body>
         <div id="tape"></div>
-        <div style="clear: both;">HEAD</div>
+        <div class="center"><div id="head"></div></div>
+        <table id="rules">
+            
+        </table>
         <script type="text/javascript">
             
             /* Display. */
             var row = document.getElementById("tape");
-            for (var i = 0; i < tape.length; i++) {
+            var head = document.getElementById("head");
+            var W = 78;
+            var zero;
+            
+            /** Create elements. */
+            for (var i in machine.tape) {
                 var div = document.createElement("div");
-                div.innerHTML = tape[i];
+                div.id = "t" + i;
+                div.innerHTML = machine.tape[i];
                 row.appendChild(div);
             }
             
+            /** Reset tape. */
+            function reset() { 
+                var count = Object.keys(machine.tape).length;
+                zero = W * (count - 1) / 2.0;
+                row.style.transform = "translate(" + zero + "px)";  
+            }
+            
+            function error() {
+                head.style.backgroundColor = "red";
+            }
+            
+            /** Move the tape to an index. */
+            function move(index) {
+                row.style.transform = "translate(" + (zero - index*W) + "px)";
+            }
+                
+            /** Set the value of an index. */
+            function value(index, value) {
+                document.getElementById("t"+index).innerHTML = value;
+            } 
+            
+            /** Set the current state. */
+            function state(state) {
+                if (state == machine.accept) head.style.backgroundColor = "lightblue";
+                head.innerHTML = state;
+            }
+            
+            /* Setup. */
+            reset();
+            state(machine.start);
+            move(machine.head);
+            
             /* Event listener. */
             document.addEventListener("mousedown", function(event) {
-                row.style.transform = "translate(-65px)"
+                machine.step();
             });
             
         </script>
