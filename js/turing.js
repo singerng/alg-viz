@@ -4,12 +4,12 @@ function value() {}
 function state() {}
 
 /** The main turing machine object. */
-function TuringMachine(start, accept, dictionary, tape, head) {
+function TuringMachine(start, accept, trans, tape, head) {
     
     /** The input symbols. */
     this.start = start;
     this.accept = accept;
-    this.dictionary = dictionary;
+    this.trans = trans;
     
     /** Convert the tape to an object. */
     if (tape.constructor === Array) {
@@ -28,7 +28,7 @@ function TuringMachine(start, accept, dictionary, tape, head) {
         if (this.state == this.accept) return;
         
         /* Get the next instructions. */
-        var next = this.dictionary[[this.state, this.tape[this.head]]];
+        var next = this.trans[[this.state, this.tape[this.head]]];
         if (!next) { error(); return; }
         
         this.state = next[0];
