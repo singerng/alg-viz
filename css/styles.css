@@ -1,52 +1,22 @@
 body {
-
     font-family: Verdana;
-    margin-top: 5em;
-
 }
 
-.center {
-
-    text-align: center;
-
+.noselect {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 #tape {
-
-    width: 100%;
-    text-align: center;
-    margin-left: 0;
-    transition: 0.5s ease-in-out;
-
+    width: 20%;
 }
 
-#head {
-    
-    clear: both;
-    
-    width: 64px;
-    height: 64px;
-    border: 3px solid black;
-    display: inline-block;
-    
-    border-radius: 36px;
-    margin-top: 4px;
-    
-    line-height: 64px;
-    font-size: 32px;
-    
-}
-
-#tape div {
-
-    width: 64px;
-    height: 64px;
-    border: 3px solid black;
-    display: inline-block;
-    
-    border-radius: 8px;
-    margin: 0px 4px;
-    
-    line-height: 64px;
-    font-size: 32px;
+table {
+	text-align: center;
+	border-spacing: 0;
+	border-collapse: separate;
 }
