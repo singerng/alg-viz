@@ -12,24 +12,17 @@
         <table id="tape">
         </table>
         
+        <table id="trans">
+        </table>
+        
         <script type="text/javascript">
-        	list = new VizList();
+        	dict = new VizDict();
+        	dict.set(["hey","there"],["you","awful","scrub"]);
+        	dict.set(["1","2"],["3","4","5"]);
         	
-        	for (i = -50; i < 100; i++) {
-        		list.set(i, i*i);
-        	}
-        	
-        	viz = new VizListView(list, 21, -10, "tape");
-        	viz.reset();
-        	viz.highlight(10);
-        	viz.update();
-        	
-        	$(window).mousedown(click);
-        	
-        	function click() {
-        		viz.head++;
-        		viz.update();
-        	}
+        	viewer = new VizTableView(dict,["a","b"],["c","d","e"],"trans");
+        	viewer.reset();
+        	viewer.update();
         </script>
 	</body>
 </html>
