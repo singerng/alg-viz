@@ -47,7 +47,7 @@ class VObj {
 		this.nomme = name;
         this.span_width = span_width;
 	}
-	
+
 	full_render(ctx, x, y) {
 		if (this.nomme) {
 			var old_font = ctx.font;
@@ -58,9 +58,9 @@ class VObj {
 
 		ctx.lineWidth = .5;
 		ctx.strokeStyle = "gray";
-        
+
         var width;
-            
+
         round_rect(ctx, x, y, this.full_width(ctx), this.full_height(), RADIUS);
 
 		this.render(ctx, x + INPAD, y + INPAD + (this.nomme ? (INPAD + FONT_SIZE) : 0));
@@ -81,15 +81,15 @@ class VVar extends VObj {
         super(name, false);
         this.value = value;
     }
-    
+
     render(ctx, x, y) {
         ctx.fillText(this.value, x, y);
     }
-    
+
     height() {
         return FONT_SIZE;
     }
-    
+
     width(ctx) {
         return ctx.measureText(this.value).width;
     }
@@ -102,50 +102,50 @@ class VList extends VObj {
         this.carets = [];
         this.gaps = [];
     }
-    
+
     add_caret(i, color) {
         this.carets[i] = color;
     }
-    
+
     clear_caret(i) {
         delete this.carets[i];
     }
-    
+
     add_gap(i) {
         this.gaps[i] = true;
     }
-    
+
     clear_gap(i) {
         delete this.gaps[i];
     }
-    
+
     add_object(o) {
         this.objects.push(o);
     }
-    
+
     get_object(i) {
         return this.objects[i];
     }
-    
+
     set_object(i, o) {
         this.objects[i] = o;
     }
-    
+
     remove_object(i) {
         this.objects.splice(x,1);
     }
-    
+
     length() {
         return this.objects.length;
     }
-    
+
 	render(ctx, x, y) {
         x += this.full_width(ctx) / 2 - this.width(ctx) / 2;
         for (var i = 0; i < this.objects.length; i++) {
             if (this.gaps[i]) x += INPAD;
-            
+
             this.objects[i].full_render(ctx, x, y);
-            
+
             if (this.carets[i]) {
                 ctx.save();
                 ctx.beginPath();
@@ -157,29 +157,29 @@ class VList extends VObj {
                 ctx.stroke();
                 ctx.restore();
             }
-            
+
             x += this.objects[i].full_width(ctx) + INPAD;
         }
     }
-    
+
     height() {
         var height = 0;
-        
+
         for (var i = 0; i < this.objects.length; i++) {
             height = Math.max(height, this.objects[i].full_height());
         }
-        
+
         return height;
     }
-    
+
     width(ctx) {
         var width = 0;
-        
+
         for (var i = 0; i < this.objects.length; i++) {
             if (this.gaps[i]) width += INPAD;
             width += this.objects[i].full_width(ctx) + INPAD;
         }
-        
+
         return width;
     }
 }
