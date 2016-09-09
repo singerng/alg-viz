@@ -3,29 +3,29 @@
 	<head>
 		<title>Insertion sort</title>
         <link rel="stylesheet" type="text/css" href="../css/styles.css">
-	<script type="text/javascript" src="../js/alg-viz.js"></script>
-        <script type="text/javascript">
-        </script>
+        <script type="text/javascript" src="../js/alg-viz.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     </head>
 	<body class="noselect">
 
 	<canvas id="canvas" width=1 height=20000></canvas>
-        
         <script type="text/javascript">
-		var canvas = document.getElementById("canvas");
-		var ctx = canvas.getContext("2d");
+            var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext("2d");
 
-		var obj = new VObj("test object");
-		var view = new VView(obj, 20);
-		var page = new VPage(ctx);
+            var page = new VPage(ctx);
 
-		var o2 = new VObj("test object2");
-		var v2 = new VView(o2, 50);
+            var list = new VList("Unsorted");
+            page.add_object(list);
 
-		page.add_view(view);		
-		page.add_view(v2);
+            for (var i = 0; i < 10; i++) {
+                list.add_object(new VVar("", Math.round(Math.random() * 100)));
+            }
 
-		page.render(ctx);
+            page.render(ctx);
+            window.setTimeout(function() {
+                page.render(ctx);
+            }, 100);
         </script>
 	</body>
 </html>
