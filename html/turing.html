@@ -15,10 +15,10 @@
 
             var page = new VPage(ctx);
 
-            var list = new VList("Unsorted");
+            var list = new VList("Numbers");
             page.add_object(list);
 
-            for (var i = 0; i < 10; i++) {
+            for (var i = 0; i < 20; i++) {
                 list.add_object(new VVar("", Math.round(Math.random() * 100)));
             }
 
@@ -26,6 +26,55 @@
             window.setTimeout(function() {
                 page.render(ctx);
             }, 100);
+            
+            console.log(list.objects[3].full_height());
+            
+            var a = alg();
+            
+            document.onclick = advance;
+            document.onkeypress = advance;
+            
+            var MIN = "#80f080";
+            var TEST = "#f08080";
+            
+            function advance() {   
+                a.next();
+                page.render(ctx);
+            }
+            
+            function* alg() {
+                var i = 0;
+                
+                while (i < list.length()) {
+                    var mindex = i;
+                    list.add_caret(i, MIN);
+                    
+                    for (var j = i; j < list.length(); j++) {
+                        list.add_caret(j, TEST);
+                        
+                        if (list.get_object(j).value <= list.get_object(mindex).value) {
+                            list.clear_caret(mindex);
+                            mindex = j;
+                        }
+                        
+                        list.add_caret(mindex, MIN);
+                        
+                        yield;
+                        
+                        list.clear_caret(j, TEST);
+                    }
+                    
+                    list.clear_caret(mindex);
+                    
+                    var s = list.get_object(i);
+                    list.set_object(i, list.get_object(mindex));
+                    list.set_object(mindex, s);
+                    
+                    i++;
+
+                    yield;
+                }
+            }
         </script>
 	</body>
 </html>

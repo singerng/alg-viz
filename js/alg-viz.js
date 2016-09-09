@@ -99,6 +99,15 @@ class VList extends VObj {
     constructor(name) {
         super(name, true);
         this.objects = [];
+        this.carets = [];
+    }
+    
+    add_caret(i, color) {
+        this.carets[i] = color;
+    }
+    
+    clear_caret(i) {
+        delete this.carets[i];
     }
     
     add_object(o) {
@@ -117,10 +126,27 @@ class VList extends VObj {
         this.objects.splice(x,1);
     }
     
+    length() {
+        return this.objects.length;
+    }
+    
 	render(ctx, x, y) {
         x += this.full_width(ctx) / 2 - this.width(ctx) / 2;
         for (var i = 0; i < this.objects.length; i++) {
             this.objects[i].full_render(ctx, x, y);
+            
+            if (this.carets[i]) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.strokeStyle = this.carets[i];
+                ctx.lineWidth = 2;
+                ctx.moveTo(x + 2*this.objects[i].full_width(ctx)/5, y + this.objects[i].full_height() + 2*INPAD/3);
+                ctx.lineTo(x + this.objects[i].full_width(ctx)/2, y + this.objects[i].full_height() + INPAD/3);
+                ctx.lineTo(x + 3*this.objects[i].full_width(ctx)/5, y + this.objects[i].full_height() + 2*INPAD/3);
+                ctx.stroke();
+                ctx.restore();
+            }
+            
             x += this.objects[i].full_width(ctx) + INPAD;
         }
     }
@@ -129,7 +155,7 @@ class VList extends VObj {
         var height = 0;
         
         for (var i = 0; i < this.objects.length; i++) {
-            height = Math.max(height, this.objects[i].full_height() + INPAD);
+            height = Math.max(height, this.objects[i].full_height());
         }
         
         return height;
