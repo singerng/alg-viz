@@ -1,115 +1,68 @@
-/** A visualized list. */
-function VizList() {
-	this.offset = 0;
-	this.data = new Array();
-	
-	this.get = function (i) {
-		return this.data[i];
+OUTPAD = 20;
+INPAD = 12;
+FONT_SIZE = 12;
+
+function VPage(ctx) {
+	this.ctx = ctx;
+	this.views = [];
+
+	ctx.canvas.width = document.body.clientWidth;
+	ctx.font = FONT_SIZE + "px monospace";
+	ctx.textBaseline = "hanging";
+
+	this.add_view = function (v) {
+		this.views.push(v);
+		v.obj.add_listener(this);
 	}
-	
-	this.set = function (i, data) {
-		this.data[i] = data;
+
+	this.notify = function (o) {
+		console.log("notified!");
+	}
+
+	this.render = function () {
+		var y = OUTPAD;
+
+		for (var i = 0; i < this.views.length; i++) {
+			this.views[i].render(this.ctx, OUTPAD, y, this.ctx.canvas.width - 2*OUTPAD);
+			y += OUTPAD + this.views[i].full_height();
+		}
 	}
 }
 
-/** Visualized list viewer. */
-function VizListView(list, size, head, id) {
-	this.container = $('#'+id);
-	this.head = head;
-	this.size = size;
-	this.list = list;
-	
-	this.reset = function() {
-		this.container.empty();
-		this.container.append("<tr><th>Index</th><th>Value</th></tr>");
-		
-		for (i = 0; i < this.size; i++) {
-			this.container.append("<tr><td></td><td></td></tr>");
-		}
+function VObj(name) {
+	this.nomme = name;
+	this.listeners = [];
+
+	this.add_listener = function (l) {
+		this.listeners.push(l);
 	}
-	
-	this.highlight = function (i) {
-		$($(this.container.children()[0]).children()[i+1]).css("background-color", "green");
-	}
-	
+
 	this.update = function () {
-		for (i = 0; i < this.size; i++) {
-			elem = $($(this.container.children()[0]).children()[i+1]);
-			$(elem.children()[0]).html(this.head+i);
-			$(elem.children()[1]).html(this.list.get(this.head+i));
+		for (var i = 0; i < this.listeners.length; i++) {
+			this.listeners[i].notify(this);
 		}
 	}
 }
 
-/** A visualized dictionary. */
-function VizDict() {
-	this.data = {};
+function VView(obj, height) {
+	this.obj = obj;
+	this.height = height;
 	
-	this.get = function (i) {
-		return this.data[i];
+	this.render = function (ctx, x, y, width) {
+		ctx.strokeStyle = "black";
+		var old_font = ctx.font;
+		//ctx.font = "bold " + old_font;
+		ctx.fillText(this.obj.nomme, x + INPAD, y + INPAD);
+		ctx.font = old_font;
+		ctx.stroke();
+
+		ctx.strokeStyle = "#FF0000";
+		ctx.rect(x, y, width, this.height + INPAD*3 + FONT_SIZE);
+		ctx.stroke();
 	}
-	
-	this.set = function (i, j) {
-		this.data[i] = j;
-	}
-	
-	this.keys = function() {
-		return Object.keys(this.data);
+
+	this.full_height = function () {
+		return this.height + FONT_SIZE + INPAD*3;
 	}
 }
 
-/** Visualized table viewer. */
-function VizTableView(dict, x, y, id) {
-	this.x = x;
-	this.y = y;
-	this.dict = dict;
-	this.container = $('#'+id);
-	
-	this.reset = function () {
-		this.container.empty();
-		
-		str = "<tr>";
-		
-		for (xlab of x) {
-			str += "<th>"+xlab+"</th>";
-		}
-		
-		for (ylab of y) {
-			str += "<th>"+ylab+"</th>";
-		}
-		
-		str += "</tr>";
-		this.container.append(str);
-		
-		str = "<tr>";
-		for (i = 0; i < x.length + y.length; i++) {
-			str += ("<td></td>");
-		}
-		str += "</tr";
-		
-		for (i = 0; i < this.dict.keys().length; i++) {
-			this.container.append(str);
-		}
-	}
-	
-	this.update = function () {
-		idx = 1;
-		for (key in this.dict.data) {
-			console.log(key);
-			elem = $($(this.container.children()[0]).children()[idx]);
-			
-			for (i = 0; i < this.x.length; i++) {
-				$(elem.children()[i]).html(key[i]);
-			}
-			
-			for (i = 0; i < this.y.length; i++) {
-				$(elem.children()[i+this.x.length]).html(this.dict.get(key)[i]);
-			}
-			
-			idx += 1;
-				
-			console.log(key);
-			console.log(this.dict.get(key));
-		}
-	}
-}

@@ -1,22 +1,4 @@
 body {
-    font-family: Verdana;
-}
-
-.noselect {
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-}
-
-#tape {
-    width: 20%;
-}
-
-table {
-	text-align: center;
-	border-spacing: 0;
-	border-collapse: separate;
+    margin: 0;
+    padding: 0;
 }

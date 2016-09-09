@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Turing Machine Visualizer</title>
+		<title>Insertion sort</title>
         <link rel="stylesheet" type="text/css" href="../css/styles.css">
-        <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-		<script type="text/javascript" src="../js/alg-viz.js"></script>
+	<script type="text/javascript" src="../js/alg-viz.js"></script>
         <script type="text/javascript">
         </script>
     </head>
 	<body class="noselect">
-        <table id="tape">
-        </table>
-        
-        <table id="trans">
-        </table>
+
+	<canvas id="canvas" width=1 height=20000></canvas>
         
         <script type="text/javascript">
-        	dict = new VizDict();
-        	dict.set(["hey","there"],["you","awful","scrub"]);
-        	dict.set(["1","2"],["3","4","5"]);
-        	
-        	viewer = new VizTableView(dict,["a","b"],["c","d","e"],"trans");
-        	viewer.reset();
-        	viewer.update();
+		var canvas = document.getElementById("canvas");
+		var ctx = canvas.getContext("2d");
+
+		var obj = new VObj("test object");
+		var view = new VView(obj, 20);
+		var page = new VPage(ctx);
+
+		var o2 = new VObj("test object2");
+		var v2 = new VView(o2, 50);
+
+		page.add_view(view);		
+		page.add_view(v2);
+
+		page.render(ctx);
         </script>
 	</body>
 </html>
