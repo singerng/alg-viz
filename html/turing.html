@@ -70,7 +70,9 @@
                     list.set_object(i, list.get_object(mindex));
                     list.set_object(mindex, s);
                     
+                    list.clear_gap(i);
                     i++;
+                    list.add_gap(i);
 
                     yield;
                 }

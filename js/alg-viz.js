@@ -100,6 +100,7 @@ class VList extends VObj {
         super(name, true);
         this.objects = [];
         this.carets = [];
+        this.gaps = [];
     }
     
     add_caret(i, color) {
@@ -108,6 +109,14 @@ class VList extends VObj {
     
     clear_caret(i) {
         delete this.carets[i];
+    }
+    
+    add_gap(i) {
+        this.gaps[i] = true;
+    }
+    
+    clear_gap(i) {
+        delete this.gaps[i];
     }
     
     add_object(o) {
@@ -133,6 +142,8 @@ class VList extends VObj {
 	render(ctx, x, y) {
         x += this.full_width(ctx) / 2 - this.width(ctx) / 2;
         for (var i = 0; i < this.objects.length; i++) {
+            if (this.gaps[i]) x += INPAD;
+            
             this.objects[i].full_render(ctx, x, y);
             
             if (this.carets[i]) {
@@ -165,6 +176,7 @@ class VList extends VObj {
         var width = 0;
         
         for (var i = 0; i < this.objects.length; i++) {
+            if (this.gaps[i]) width += INPAD;
             width += this.objects[i].full_width(ctx) + INPAD;
         }
         
