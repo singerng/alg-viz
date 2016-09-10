@@ -12,7 +12,7 @@
         <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     </head>
 	<body class="noselect">
-		<h1>Selection sort</h1>
+		<h1>Fun with Sorting!</h1>
 
 		<button type="button" onclick="toggle_animation();" id="animation">Play</button>
 
@@ -21,7 +21,7 @@
 	    <script type="text/javascript">
 			var page = new VPage();
 
-	        var sort = new SelectionSort(page);
+	        var sort = new InsertionSort(page);
 			var alg = sort.execute();
 
 	        document.onkeypress = function(e) {
@@ -35,8 +35,13 @@
 	            alg.next();
 	        }
 
+			var timer;
 			function toggle_animation() {
-				window.setInterval(advance, 500);
+				if (!timer) timer = window.setInterval(advance, 25);
+				else {
+					window.clearInterval(timer);
+					timer = 0;
+				}
 			}
 	    </script>
 	</body>
