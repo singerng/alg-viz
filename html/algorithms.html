@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Sorting Simulator</title>
+
+		<script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" type="text/css" href="../css/styles.css">
+        <script type="text/javascript" src="../js/alg-viz.js"></script>
+        <script type="text/javascript" src="../js/sorts.js"></script>
+
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    </head>
+	<body class="noselect">
+	    <script type="text/javascript">
+			var page = new VPage();
+
+	        var sort = new SelectionSort(page);
+			var alg = sort.execute();
+
+	        document.onkeypress = function(e) {
+	            if (e.charCode == 32) {
+	                advance();
+					return false;
+	            }
+	        };
+
+	        function advance() {
+	            alg.next();
+	        }
+	    </script>
+	</body>
+</html>
