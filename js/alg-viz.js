@@ -82,4 +82,12 @@ class VList extends VObj {
 	uncolor(i) {
 		$(this.objects[i].elem).css("background-color", "white");
 	}
+
+	disable(i) {
+		color(i, "black");
+	}
+
+	enable(i) {
+		uncolor(i);
+	}
 }

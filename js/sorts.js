@@ -17,17 +17,26 @@ class Sort {
         page.add_object(this.xchgs);
     }
 
-    less(i, j) {
+    lessl(l1, i, l2, j) {
         this.cmps.value++;
-        return this.list.get_object(i).value <= this.list.get_object(j).value;
+
+        return l1.get_object(i).value <= l2.get_object(j).value;
+    }
+
+    less(i, j) {
+        return this.lessl(this.list, i, this.list, j);
+    }
+
+    xchgl(l1, i, l2, j) {
+        this.xchgs.value++;
+
+        var tmp = l1.get_object(i).value;
+        l1.get_object(i).value = l2.get_object(j).value;
+        l2.get_object(j).value = tmp;
     }
 
     xchg(i, j) {
-        this.xchgs.value++;
-
-        var tmp = this.list.get_object(i).value;
-        this.list.get_object(i).value = this.list.get_object(j).value;
-        this.list.get_object(j).value = tmp;
+        this.xchgl(this.list, i, this.list, j);
     }
 }
 
@@ -94,5 +103,51 @@ class InsertionSort extends Sort {
 
             i++;
         }
+    }
+}
+
+/* Implementation based off of Algorithms by Robert Sedgewick */
+class MergeSort extends Sort {
+    constructor(page) {
+        super(page);
+
+        this.aux = new VList("Auxiliary", true, false);
+        for (var i = 0; i < this.list.length(); i++) this.aux.add_object(new VVar("", false, false, ""));
+
+        page.add_object(this.aux);
+    }
+
+    *merge(lo, mid, hi) {
+        for (var i = lo; i <= hi; i++) {
+            this.xchgl(this.list, i, this.aux, i);
+            yield;
+        }
+
+        var r = lo, s = mid+1;
+        for (var i = lo; i <= hi; i++) {
+            if (r > mid) this.xchgl(this.list, i, this.aux, s++);
+            else if (s > hi) this.xchgl(this.list, i, this.aux, r++);
+            else if (this.lessl(this.aux, r, this.aux, s)) this.xchgl(this.list, i, this.aux, r++);
+            else this.xchgl(this.list, i, this.aux, s++);
+            yield;
+        }
+    }
+
+    *sort(lo, hi) {
+        if (hi <= lo) return;
+        var mid = Math.trunc(lo + (hi-lo) / 2);
+
+        yield;
+        yield* this.sort(lo, mid);
+
+        yield;
+        yield* this.sort(mid+1, hi);
+
+        yield;
+        yield* this.merge(lo, mid, hi);
+    }
+
+    *execute() {
+        yield* this.sort(0, this.list.length() - 1);
     }
 }
