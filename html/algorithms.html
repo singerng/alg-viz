@@ -12,6 +12,12 @@
         <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     </head>
 	<body class="noselect">
+		<h1>Selection sort</h1>
+
+		<button type="button" onclick="toggle_animation();" id="animation">Play</button>
+
+		<div id="algorithm"></div>
+
 	    <script type="text/javascript">
 			var page = new VPage();
 
@@ -28,6 +34,10 @@
 	        function advance() {
 	            alg.next();
 	        }
+
+			function toggle_animation() {
+				window.setInterval(advance, 500);
+			}
 	    </script>
 	</body>
 </html>

@@ -5,7 +5,7 @@ class VPage {
 
 	add_object(o) {
 		this.objects.push(o);
-        document.body.appendChild(o.elem);
+        document.getElementById("algorithm").appendChild(o.elem);
 	}
 }
 
@@ -42,6 +42,7 @@ class VVar extends VObj {
 		return this._value;
 	}
 }
+
 class VList extends VObj {
     constructor(name, block, compressed) {
         super(name, block, compressed);
@@ -72,5 +73,13 @@ class VList extends VObj {
 
 	ungap(i) {
 		$(this.objects[i].elem).removeClass("gap");
+	}
+
+	color(i,c) {
+		$(this.objects[i].elem).css("background-color", c);
+	}
+
+	uncolor(i) {
+		$(this.objects[i].elem).css("background-color", "white");
 	}
 }

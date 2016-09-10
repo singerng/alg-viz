@@ -7,7 +7,7 @@ class Sort {
 
         this.list = new VList("Numbers", true, false);
 
-        for (var i = 0; i < 20; i++) this.list.add_object(new VVar("", false, false, Math.round(Math.random() * 100)));
+        for (var i = 0; i < 20; i++) this.list.add_object(new VVar("", false, false, Math.round(Math.random() * 500)));
 
         this.cmps = new VVar("Comparisons", true, true, 0);
         this.xchgs = new VVar("Exchanges", true, true, 0);
@@ -39,17 +39,27 @@ class SelectionSort extends Sort {
             var mindex = i;
 
             for (var j = i; j < this.list.length(); j++) {
+                if (j>0) this.list.uncolor(j-1);
+                this.list.color(j, TEST);
+
                 if (this.less(j, mindex)) {
+                    this.list.uncolor(mindex);
                     mindex = j;
                 }
+
+                this.list.color(mindex, MIN);
 
                 yield;
             }
 
             this.xchg(i, mindex);
 
+
             this.list.gap(i);
             if (i > 0) this.list.ungap(i-1);
+            this.list.uncolor(mindex);
+            this.list.uncolor(j-1);
+
             i++;
 
             yield;
