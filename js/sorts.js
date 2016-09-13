@@ -7,7 +7,7 @@ class Sort {
 
         this.list = new VList("Numbers", true, false);
 
-        for (var i = 0; i < 100; i++) this.list.add_object(new VVar("", false, false, Math.round(Math.random() * 500)));
+        for (var i = 0; i < 8; i++) this.list.add_object(new VVar("", false, false, Math.round(Math.random() * 500)));
 
         this.cmps = new VVar("Comparisons", true, true, 0);
         this.xchgs = new VVar("Exchanges", true, true, 0);
@@ -141,14 +141,32 @@ class MergeSort extends Sort {
 
         var r = lo, s = mid+1;
         for (var i = lo; i <= hi; i++) {
-            if (r > mid) this.xchgl(this.list, i, this.aux, s++);
-            else if (s > hi) this.xchgl(this.list, i, this.aux, r++);
-            else if (this.lessl(this.aux, r, this.aux, s)) this.xchgl(this.list, i, this.aux, r++);
-            else this.xchgl(this.list, i, this.aux, s++);
+            if (r > mid) yield this.xchgl(this.list, i, this.aux, s++);
+            else if (s > hi) yield this.xchgl(this.list, i, this.aux, r++);
+            else if (this.lessl(this.aux, r, this.aux, s)) yield this.xchgl(this.list, i, this.aux, r++);
+            else yield this.xchgl(this.list, i, this.aux, s++);
+        }
+    }
+
+    show_recursion(lo, hi) {
+        for (var i = 0; i < this.list.length(); i++) {
+            if (lo <= i && i <= hi) {
+                this.list.enable(i);
+                this.aux.enable(i);
+            } else {
+                this.list.disable(i);
+                this.aux.enable(i);
+            }
         }
     }
 
     *sort(lo, hi) {
+        console.log("SORTING", lo, hi);
+        for (var i = 0; i < this.list.length(); i++) {
+            if (lo <= i && i <= hi) this.list.enable(i);
+            else this.list.disable(i);
+        }
+
         yield;
         if (hi <= lo) return;
         var mid = Math.trunc(lo + (hi-lo) / 2);
@@ -158,6 +176,11 @@ class MergeSort extends Sort {
 
         yield;
         yield* this.sort(mid+1, hi);
+
+        for (var i = 0; i < this.list.length(); i++) {
+            if (lo <= i && i <= hi) this.list.enable(i);
+            else this.list.disable(i);
+        }
 
         yield;
         yield* this.merge(lo, mid, hi);

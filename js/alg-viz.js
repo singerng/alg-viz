@@ -84,11 +84,11 @@ class VList extends VObj {
 	}
 
 	disable(i) {
-		color(i, "black");
+		this.color(i, "black");
 	}
 
 	enable(i) {
-		uncolor(i);
+		this.uncolor(i);
 	}
 
 	set_width(w) {
