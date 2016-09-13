@@ -14,15 +14,34 @@
 	<body class="noselect">
 		<h1>Fun with Sorting!</h1>
 
-		<button type="button" onclick="toggle_animation();" id="animation">Play</button>
+		<h3>Controls</h3>
+			<label for="numbers">Number of numbers:</label> <input type="number" value="32" id="numbers"/><br/>
+			<label for="upper">Number upper bound:</label> <input type="number" value="1000" id="upper"></br/>
+			<label for="sort">Sorting algorithm:</label>
+			<select id="sort">
+				<option value="insert">Insertion sort</option>
+				<option value="select">Selection sort</option>
+				<option value="merge">Mergesort</option>
+			</select>
+
+			<button type="button" onclick="setup();" id="setup">Setup</button><br/><br/>
+
+			<label for="delay">Delay between steps:</label> <input type="number" value="1000" id="delay"/><br/>
+
+			<div class="controls">
+				<button type="button" onclick="advance();" id="step">Step</button>
+				<button type="button" onclick="toggle_animation();" id="animation">Play</button>
+				<button type="button" onclick="execute();" id="execute">Execute completely</button>
+			</div>
+
+		<h3>Demo</h3>
 
 		<div id="algorithm"></div>
 
 	    <script type="text/javascript">
 			var page = new VPage();
 
-	        var sort = new MergeSort(page);
-			var alg = sort.execute();
+			var sort, alg;
 
 	        document.onkeypress = function(e) {
 	            if (e.charCode == 32) {
@@ -32,16 +51,38 @@
 	        };
 
 	        function advance() {
-	            alg.next();
+	            return alg.next().done;
 	        }
 
 			var timer;
 			function toggle_animation() {
-				if (!timer) timer = window.setInterval(advance, 200);
+				if (!timer) timer = window.setInterval(advance, $('#delay').val());
 				else {
 					window.clearInterval(timer);
 					timer = 0;
 				}
+			}
+
+			function execute() {
+				while (!advance());
+			}
+
+			function setup() {
+				switch ($('#sort').val()) {
+				case 'insert':
+					sort = new InsertionSort(page);
+					break;
+				case 'select':
+					sort = new SelectionSort(page);
+					break;
+				case 'merge':
+					sort = new MergeSort(page);
+					break;
+				}
+
+				alg = sort.execute();
+
+				sort.generate($("#numbers").val(), $("#upper").val());
 			}
 	    </script>
 	</body>

@@ -6,9 +6,6 @@ class Sort {
         this.page = page;
 
         this.list = new VList("Numbers", true, false);
-
-        for (var i = 0; i < 8; i++) this.list.add_object(new VVar("", false, false, Math.round(Math.random() * 500)));
-
         this.cmps = new VVar("Comparisons", true, true, 0);
         this.xchgs = new VVar("Exchanges", true, true, 0);
 
@@ -16,6 +13,11 @@ class Sort {
         page.add_object(this.cmps);
         page.add_object(this.xchgs);
 
+        this.list.normalize_width();
+    }
+
+    generate(n,u) {
+        for (var i = 0; i < n; i++) this.list.add_object(new VVar("", false, false, Math.round(Math.random() * u)));
         this.list.normalize_width();
     }
 
@@ -60,11 +62,11 @@ class SelectionSort extends Sort {
         var i = 0;
 
         while (i < this.list.length()) {
-            var mindex = i;
 
             for (var j = i; j < this.list.length(); j++) {
                 this.list.color(j, TEST);
                 if (j > 0) this.list.uncolor(j-1);
+                var mindex = i;
 
                 if (this.less(j, mindex)) {
                     this.list.uncolor(mindex);
@@ -123,13 +125,13 @@ class InsertionSort extends Sort {
 
 /* Implementation based off of Algorithms by Robert Sedgewick */
 class MergeSort extends Sort {
-    constructor(page) {
-        super(page);
+    generate(n,u) {
+        super.generate(n,u);
 
         this.aux = new VList("Auxiliary", true, false);
         for (var i = 0; i < this.list.length(); i++) this.aux.add_object(new VVar("", false, false, "_"));
 
-        page.add_object(this.aux);
+        this.page.add_object(this.aux);
         this.aux.set_width(this.list.get_width());
     }
 
@@ -149,10 +151,10 @@ class MergeSort extends Sort {
     }
 
     show_recursion(lo, hi) {
+        this.aux.enable(i);
         for (var i = 0; i < this.list.length(); i++) {
             if (lo <= i && i <= hi) {
                 this.list.enable(i);
-                this.aux.enable(i);
             } else {
                 this.list.disable(i);
                 this.aux.enable(i);
@@ -161,7 +163,6 @@ class MergeSort extends Sort {
     }
 
     *sort(lo, hi) {
-        console.log("SORTING", lo, hi);
         for (var i = 0; i < this.list.length(); i++) {
             if (lo <= i && i <= hi) this.list.enable(i);
             else this.list.disable(i);
