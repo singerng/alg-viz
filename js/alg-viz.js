@@ -90,4 +90,18 @@ class VList extends VObj {
 	enable(i) {
 		uncolor(i);
 	}
+
+	set_width(w) {
+		for (var i = 0; i < this.length(); i++) $(this.objects[i].elem).width(w);
+	}
+
+	get_width() {
+		var w = 0;
+		for (var i = 0; i < this.length(); i++) w = Math.max(w, $(this.objects[i].elem).width());
+		return w;
+	}
+
+	normalize_width() {
+		this.set_width(this.get_width());
+	}
 }

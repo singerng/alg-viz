@@ -26,6 +26,7 @@ div.compressed {
 }
 
 div.float {
+    position: relative;
     display: inline-block;
 }
 

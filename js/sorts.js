@@ -7,7 +7,7 @@ class Sort {
 
         this.list = new VList("Numbers", true, false);
 
-        for (var i = 0; i < 50; i++) this.list.add_object(new VVar("", false, false, Math.round(Math.random() * 500)));
+        for (var i = 0; i < 100; i++) this.list.add_object(new VVar("", false, false, Math.round(Math.random() * 500)));
 
         this.cmps = new VVar("Comparisons", true, true, 0);
         this.xchgs = new VVar("Exchanges", true, true, 0);
@@ -15,6 +15,8 @@ class Sort {
         page.add_object(this.list);
         page.add_object(this.cmps);
         page.add_object(this.xchgs);
+
+        this.list.normalize_width();
     }
 
     lessl(l1, i, l2, j) {
@@ -29,6 +31,19 @@ class Sort {
 
     xchgl(l1, i, l2, j) {
         this.xchgs.value++;
+
+        var dx = $(l2.get_object(j).elem).position().left-$(l1.get_object(i).elem).position().left;
+        var dy = $(l2.get_object(j).elem).position().top-$(l1.get_object(i).elem).position().top;
+
+        /*$(l1.get_object(i).elem).animate({
+            top: "+="+dy,
+            left: "+="+dx
+        }, 100);
+
+        $(l2.get_object(j).elem).animate({
+            top: "+="+(-dy),
+            left: "+="+(-dx)
+        }, 100);*/
 
         var tmp = l1.get_object(i).value;
         l1.get_object(i).value = l2.get_object(j).value;
@@ -48,8 +63,8 @@ class SelectionSort extends Sort {
             var mindex = i;
 
             for (var j = i; j < this.list.length(); j++) {
-                if (j > 0) this.list.uncolor(j-1);
                 this.list.color(j, TEST);
+                if (j > 0) this.list.uncolor(j-1);
 
                 if (this.less(j, mindex)) {
                     this.list.uncolor(mindex);
@@ -67,10 +82,10 @@ class SelectionSort extends Sort {
             if (i > 0) this.list.ungap(i-1);
             this.list.uncolor(mindex);
             this.list.uncolor(j-1);
-
             i++;
 
             yield;
+
         }
     }
 }
@@ -112,9 +127,10 @@ class MergeSort extends Sort {
         super(page);
 
         this.aux = new VList("Auxiliary", true, false);
-        for (var i = 0; i < this.list.length(); i++) this.aux.add_object(new VVar("", false, false, ""));
+        for (var i = 0; i < this.list.length(); i++) this.aux.add_object(new VVar("", false, false, "_"));
 
         page.add_object(this.aux);
+        this.aux.set_width(this.list.get_width());
     }
 
     *merge(lo, mid, hi) {
@@ -129,11 +145,11 @@ class MergeSort extends Sort {
             else if (s > hi) this.xchgl(this.list, i, this.aux, r++);
             else if (this.lessl(this.aux, r, this.aux, s)) this.xchgl(this.list, i, this.aux, r++);
             else this.xchgl(this.list, i, this.aux, s++);
-            yield;
         }
     }
 
     *sort(lo, hi) {
+        yield;
         if (hi <= lo) return;
         var mid = Math.trunc(lo + (hi-lo) / 2);
 
