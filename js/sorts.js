@@ -1,193 +1,229 @@
-var MIN = "#80f080";
-var TEST = "#f08080";
+var COLOR1 = "#6060ff";
+var COLOR2 = "#ff6060";
+var SUCCESS = "#60ff60";
 
 class Sort {
-    constructor(page) {
-        this.page = page;
+  constructor(page) {
+    this.page = page;
 
-        this.list = new VList("Numbers", true, false);
-        this.cmps = new VVar("Comparisons", true, true, 0);
-        this.xchgs = new VVar("Exchanges", true, true, 0);
+    /* Construct the objects */
+    this.list = new _List("Numbers", true, false);
+    this.status = new _Container("Status", true, false);
+    this.cmps = new _Var("Comparisons", true, true, 0);
+    this.xchgs = new _Var("Exchanges", true, true, 0);
 
-        page.add_object(this.list);
-        page.add_object(this.cmps);
-        page.add_object(this.xchgs);
+    /* Add all the objects to the pages */
+    page.add_object(this.list);
+    page.add_object(this.status);
+    page.add_object(this.cmps);
+    page.add_object(this.xchgs);
 
-        this.list.normalize_width();
-    }
+    /* Normalize the widths of all the elements in the list */
+    this.list.normalize_width();
+  }
 
-    generate(n,u) {
-        for (var i = 0; i < n; i++) this.list.add_object(new VVar("", false, false, Math.round(Math.random() * u)));
-        this.list.normalize_width();
-    }
+  /* Generates the list to sort */
+  generate(n, max) {
+    /* Randomly chooses all the numbers and puts them in the list */
+    for (var i = 0; i < n; i++) this.list.add_object(new _Var("", false, false, Math.round(Math.random() * max)));
 
-    lessl(l1, i, l2, j) {
-        this.cmps.value++;
+    /* Normalize the widths of all the elements in the list */
+    this.list.normalize_width();
+  }
 
-        return l1.get_object(i).value <= l2.get_object(j).value;
-    }
+  /* Updates the status of this sorting algorith */
+  update(status) {
+    $(this.status.cont).empty();
+    $(this.status.cont).html(status);
+  }
 
-    less(i, j) {
-        return this.lessl(this.list, i, this.list, j);
-    }
+  /* Compare two elements in two different lists */
+  *lessl(l1, i, l2, j) {
+    this.cmps.value++;
 
-    xchgl(l1, i, l2, j) {
-        this.xchgs.value++;
+    /* Mark the list elements for coloring */
+    l1.color(i, COLOR1);
+    l2.color(j, COLOR2);
 
-        var dx = $(l2.get_object(j).elem).position().left-$(l1.get_object(i).elem).position().left;
-        var dy = $(l2.get_object(j).elem).position().top-$(l1.get_object(i).elem).position().top;
+    /* STEP: Compare the two elements */
+    this.update("Comparing elements " + l1.box(i) + " and " + l2.box(j) + ".");
+    yield;
 
-        /*$(l1.get_object(i).elem).animate({
-            top: "+="+dy,
-            left: "+="+dx
-        }, 100);
+    /* STEP: Report the result */
+    var result = l1.get_object(i).value <= l2.get_object(j).value;
+    this.update("Result: " + l1.box(i) + (result ? "<=" : ">") + l2.box(j));
+    yield;
 
-        $(l2.get_object(j).elem).animate({
-            top: "+="+(-dy),
-            left: "+="+(-dx)
-        }, 100);*/
+    /* Uncolor the list elements */
+    l1.uncolor(i);
+    l2.uncolor(j);
 
-        var tmp = l1.get_object(i).value;
-        l1.get_object(i).value = l2.get_object(j).value;
-        l2.get_object(j).value = tmp;
-    }
+    return result;
+  }
 
-    xchg(i, j) {
-        this.xchgl(this.list, i, this.list, j);
-    }
+  /* Compare two elements in the same list */
+  *less(i, j) {
+    return yield* this.lessl(this.list, i, this.list, j);
+  }
+
+  /* Exchange two elements in two different lists */
+  *xchgl(l1, i, l2, j) {
+    this.xchgs.value++;
+
+    /* Mark the list elements for exchange */
+    l1.color(i, COLOR1);
+    l2.color(j, COLOR2);
+
+    /* STEP: Exchange the two elements */
+    this.update("Exchanging elements " + l1.box(i) + " and " + l2.box(j) + ".");
+    yield;
+
+    var tmp = l1.get_object(i).value;
+    l1.get_object(i).value = l2.get_object(j).value;
+    l2.get_object(j).value = tmp;
+    this.update("Exchanged elements " + l1.box(i) + " and " + l2.box(j) + ".");
+    yield;
+
+    /* Uncolor the list elements */
+    l1.uncolor(i);
+    l2.uncolor(j);
+  }
+
+  /* Exchange two elements in the same list */
+  *xchg(i, j) {
+    yield* this.xchgl(this.list, i, this.list, j);
+  }
 }
 
 class SelectionSort extends Sort {
-    *execute() {
-        var i = 0;
+  /* Run the selection sort */
+  *execute() {
+    var i = 0;
 
-        while (i < this.list.length()) {
+    while (i < this.list.length()) {
+      var mindex = i;
 
-            for (var j = i; j < this.list.length(); j++) {
-                this.list.color(j, TEST);
-                if (j > 0) this.list.uncolor(j-1);
-                var mindex = i;
+      for (var j = i; j < this.list.length(); j++) {
+        this.list.color(j, COLOR1);
 
-                if (this.less(j, mindex)) {
-                    this.list.uncolor(mindex);
-                    mindex = j;
-                }
+        if (j > 0) this.list.uncolor(j-1);
 
-                this.list.color(mindex, MIN);
+        var cmp = yield* this.less(j, mindex);
 
-                yield;
-            }
-
-            this.xchg(i, mindex);
-
-            this.list.gap(i);
-            if (i > 0) this.list.ungap(i-1);
-            this.list.uncolor(mindex);
-            this.list.uncolor(j-1);
-            i++;
-
-            yield;
-
+        if (cmp) {
+          this.list.uncolor(mindex);
+          mindex = j;
         }
+
+        this.list.color(mindex, COLOR2);
+      }
+
+      yield* this.xchg(i, mindex);
+
+      this.list.gap(i);
+      if (i > 0) this.list.ungap(i-1);
+      this.list.uncolor(mindex);
+      this.list.uncolor(j-1);
+      i++;
     }
+
+    this.update("Done.");
+  }
 }
 
 class InsertionSort extends Sort {
-    *execute() {
-        var i = 0;
-        var j;
+  *execute() {
+    var i = 1;
+    var j;
 
-        while (i < this.list.length()) {
-            if (i > 0) this.list.ungap(i-1);
-            this.list.gap(i);
-            this.list.color(i, TEST);
-            yield;
+    while (i < this.list.length()) {
+      if (i > 0) this.list.ungap(i-1);
+      this.list.gap(i);
+      yield;
 
-            j = i;
+      j = i;
 
-            while (j != 0 && !this.less(j-1, j)) {
-                this.xchg(j-1, j);
-                this.list.uncolor(j);
-                this.list.color(j-1, TEST);
-                j--;
+      while (j > 0) {
+        if (!(yield* this.less(j-1, j))) {
+          yield* this.xchg(j-1, j);
+          j--;
+        } else break;
+      }
 
-                yield;
-            }
+      this.list.color(j, SUCCESS);
+      this.update("Successfully inserted item " + this.list.box(j) + ".");
+      yield;
+      this.list.uncolor(j);
 
-            this.list.color(j, MIN);
-            yield;
-            this.list.uncolor(j);
-
-            i++;
-        }
+      i++;
     }
+
+    this.update("Done.");
+  }
 }
 
 /* Implementation based off of Algorithms by Robert Sedgewick */
 class MergeSort extends Sort {
-    generate(n,u) {
-        super.generate(n,u);
+  generate(n,u) {
+    super.generate(n,u);
 
-        this.aux = new VList("Auxiliary", true, false);
-        for (var i = 0; i < this.list.length(); i++) this.aux.add_object(new VVar("", false, false, "_"));
+    this.aux = new _List("Auxiliary", true, false);
+    for (var i = 0; i < this.list.length(); i++) this.aux.add_object(new _Var("", false, false, "_"));
 
-        this.page.add_object(this.aux);
-        this.aux.set_width(this.list.get_width());
+    this.page.add_object(this.aux);
+    this.aux.set_width(this.list.get_width());
+  }
+
+  *merge(lo, mid, hi) {
+    for (var i = lo; i <= hi; i++) {
+      yield* this.xchgl(this.list, i, this.aux, i);
     }
 
-    *merge(lo, mid, hi) {
-        for (var i = lo; i <= hi; i++) {
-            this.xchgl(this.list, i, this.aux, i);
-            yield;
-        }
+    var r = lo, s = mid+1;
+    for (var i = lo; i <= hi; i++) {
+      if (r > mid) yield* this.xchgl(this.list, i, this.aux, s++);
+      else if (s > hi) yield* this.xchgl(this.list, i, this.aux, r++);
+      else if (yield* this.lessl(this.aux, r, this.aux, s)) yield* this.xchgl(this.list, i, this.aux, r++);
+      else yield* this.xchgl(this.list, i, this.aux, s++);
+    }
+  }
 
-        var r = lo, s = mid+1;
-        for (var i = lo; i <= hi; i++) {
-            if (r > mid) yield this.xchgl(this.list, i, this.aux, s++);
-            else if (s > hi) yield this.xchgl(this.list, i, this.aux, r++);
-            else if (this.lessl(this.aux, r, this.aux, s)) yield this.xchgl(this.list, i, this.aux, r++);
-            else yield this.xchgl(this.list, i, this.aux, s++);
-        }
+  *sort(lo, hi) {
+    for (var i = 0; i < this.list.length(); i++) {
+      if (lo <= i && i <= hi) this.list.enable(i);
+      else this.list.disable(i);
     }
 
-    show_recursion(lo, hi) {
-        this.aux.enable(i);
-        for (var i = 0; i < this.list.length(); i++) {
-            if (lo <= i && i <= hi) {
-                this.list.enable(i);
-            } else {
-                this.list.disable(i);
-                this.aux.enable(i);
-            }
-        }
+    if (hi <= lo) return;
+    var mid = Math.trunc(lo + (hi-lo) / 2);
+
+    this.update("Sorting first half.");
+    yield;
+    yield* this.sort(lo, mid);
+    this.update("Sorted first half.");
+    yield;
+
+    this.update("Sorting second half.");
+    yield;
+    yield* this.sort(mid+1, hi);
+    this.update("Sorted second half.");
+    yield;
+
+    for (var i = 0; i < this.list.length(); i++) {
+      if (lo <= i && i <= hi) this.list.enable(i);
+      else this.list.disable(i);
     }
 
-    *sort(lo, hi) {
-        for (var i = 0; i < this.list.length(); i++) {
-            if (lo <= i && i <= hi) this.list.enable(i);
-            else this.list.disable(i);
-        }
+    this.update("Merging.");
+    yield;
+    yield* this.merge(lo, mid, hi);
+    this.update("Merged.");
+    yield;
+  }
 
-        yield;
-        if (hi <= lo) return;
-        var mid = Math.trunc(lo + (hi-lo) / 2);
+  *execute() {
+    yield* this.sort(0, this.list.length() - 1);
 
-        yield;
-        yield* this.sort(lo, mid);
-
-        yield;
-        yield* this.sort(mid+1, hi);
-
-        for (var i = 0; i < this.list.length(); i++) {
-            if (lo <= i && i <= hi) this.list.enable(i);
-            else this.list.disable(i);
-        }
-
-        yield;
-        yield* this.merge(lo, mid, hi);
-    }
-
-    *execute() {
-        yield* this.sort(0, this.list.length() - 1);
-    }
+    this.update("Done.");
+  }
 }

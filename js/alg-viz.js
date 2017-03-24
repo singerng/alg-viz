@@ -5,31 +5,40 @@ class VPage {
 
 	add_object(o) {
 		this.objects.push(o);
-        document.getElementById("algorithm").appendChild(o.elem);
+  	document.getElementById("algorithm").appendChild(o.elem);
 	}
 }
 
-class VObj {
+class _Object {
 	constructor(name, block, compressed) {
-        this.elem = document.createElement("div");
-        this.elem.className = "box " + (block ? "block" : "float") + (compressed ? " compressed" : "");
+    this.elem = document.createElement("div");
+    this.elem.className = "box " + (block ? "block" : "float") + (compressed ? " compressed" : "");
 
-        if (name) {
-            var name_node = document.createElement("span");
-            name_node.appendChild(document.createTextNode(name));
-            this.elem.appendChild(name_node);
-        }
+    if (name) {
+      var name_node = document.createElement("span");
+      name_node.appendChild(document.createTextNode(name));
+      this.elem.appendChild(name_node);
+    }
 	}
 }
 
-class VVar extends VObj {
-    constructor(name, block, compressed, value) {
-        super(name, block, compressed);
-        this.value = value;
+class _Container extends _Object {
+	constructor(name, block, compressed) {
+		super(name, block, compressed);
+
+		this.cont = document.createElement("div");
+		this.elem.appendChild(this.cont);
+	}
+}
+
+class _Var extends _Object {
+  constructor(name, block, compressed, value) {
+    super(name, block, compressed);
+    this.value = value;
 
 		this.text.nodeValue = value;
-        this.elem.appendChild(this.text);
-    }
+    this.elem.appendChild(this.text);
+  }
 
 	set value(value) {
 		if (this.text) this.text.nodeValue = value;
@@ -43,21 +52,21 @@ class VVar extends VObj {
 	}
 }
 
-class VList extends VObj {
-    constructor(name, block, compressed) {
-        super(name, block, compressed);
-        this.objects = [];
-        this.carets = [];
-        this.gaps = [];
+class _List extends _Object {
+  constructor(name, block, compressed) {
+    super(name, block, compressed);
+    this.objects = [];
+    this.carets = [];
+    this.gaps = [];
 
 		this.contents = document.createElement("div");
 		this.elem.appendChild(this.contents);
-    }
+  }
 
-    add_object(o) {
-        this.objects.push(o);
-        this.contents.appendChild(o.elem);
-    }
+  add_object(o) {
+    this.objects.push(o);
+    this.contents.appendChild(o.elem);
+  }
 
 	length() {
 		return this.objects.length;
@@ -103,5 +112,9 @@ class VList extends VObj {
 
 	normalize_width() {
 		this.set_width(this.get_width());
+	}
+
+	box(i) {
+		return this.objects[i].elem.outerHTML;
 	}
 }
