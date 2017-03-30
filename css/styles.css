@@ -43,3 +43,12 @@ div.gap {
 div.controls {
     text-align: center;
 }
+
+table {
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 5px;
+  margin: 0;
+}

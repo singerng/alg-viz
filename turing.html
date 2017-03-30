@@ -31,9 +31,13 @@
 
 				var turing, alg;
 
-				turing = new Turing(page, [], [
-					{old: 'start', oldsym: '--', new: 'state1', newsym: '0', dir: -1}
-				]);
+				turing = new Turing(page, 'seek-right', ['halt'], [
+					{old: 'seek-right', oldsym: '0', new: 'seek-right', newsym: '0', dir: 1},
+					{old: 'seek-right', oldsym: '1', new: 'seek-right', newsym: '1', dir: 1},
+					{old: 'seek-right', oldsym: '_', new: 'carry-left', newsym: '_', dir: -1},
+					{old: 'carry-left', oldsym: '0', new: 'halt', newsym: '1', dir: -1},
+					{old: 'carry-left', oldsym: '1', new: 'carry-left', newsym: '0', dir: -1}
+				], ["1", "0", "0", "0", "1", "1"]);
 				alg = turing.execute();
 
 	      document.onkeypress = function(e) {

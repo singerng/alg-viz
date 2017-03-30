@@ -1,4 +1,5 @@
 SUCCESS = "#00ff30";
+MARKED = "#0030ff";
 
 class _Page {
 	constructor(ctx) {
@@ -55,7 +56,7 @@ class _Var extends _Object {
 }
 
 function blank() {
-	return new _Var("", false, false, "--");
+	return new _Var("", false, false, "_");
 }
 
 class _Array extends _Object {
@@ -111,7 +112,7 @@ class _Array extends _Object {
 		$(this.objects[i].elem).removeClass("gap");
 	}
 
-	color(i,c) {
+	color(i, c) {
 		$(this.objects[i].elem).css("background-color", c);
 	}
 
@@ -138,6 +139,7 @@ class _Array extends _Object {
 	}
 
 	normalize_width() {
+		this.set_width('');
 		this.set_width(this.get_width());
 	}
 
