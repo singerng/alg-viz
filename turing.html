@@ -16,7 +16,14 @@
 		<h1>Turing Machines</h1>
 
 		<h3>Controls</h3>
-			<label for="delay">Delay between steps (ms):</label> <input type="number" value="1000" id="delay"/><br/>
+			<select id="sort">
+				<option value="increment">Binary increment</option>
+				<option value="decrement">Binary decrement</option>
+			</select>
+
+			<button type="button" onclick="setup();" id="setup">Setup</button><br/><br/>
+
+			<label for="delay">Delay between steps (ms):</label> <input type="number" value="250" id="delay"/><br/>
 
 			<div class="controls">
 				<button type="button" onclick="advance();" id="step">Step</button>
@@ -29,16 +36,7 @@
 	    <script type="text/javascript">
 				var page = new _Page();
 
-				var turing, alg;
-
-				turing = new Turing(page, 'seek-right', ['halt'], [
-					{old: 'seek-right', oldsym: '0', new: 'seek-right', newsym: '0', dir: 1},
-					{old: 'seek-right', oldsym: '1', new: 'seek-right', newsym: '1', dir: 1},
-					{old: 'seek-right', oldsym: '_', new: 'carry-left', newsym: '_', dir: -1},
-					{old: 'carry-left', oldsym: '0', new: 'halt', newsym: '1', dir: -1},
-					{old: 'carry-left', oldsym: '1', new: 'carry-left', newsym: '0', dir: -1}
-				], ["1", "0", "0", "0", "1", "1"]);
-				alg = turing.execute();
+				var tm, alg;
 
 	      document.onkeypress = function(e) {
 	        if (e.charCode == 32) {
@@ -58,6 +56,41 @@
 						window.clearInterval(timer);
 						timer = 0;
 					}
+				}
+
+				function setup() {
+					var div = document.getElementById('algorithm');
+					while (div.firstChild) div.removeChild(div.firstChild);
+
+					switch ($('#sort').val()) {
+					case 'increment':
+						tm = new Turing(page, 'seek-right', ['halt'], [
+							{old: 'seek-right', oldsym: '0', new: 'seek-right', newsym: '0', dir: 1},
+							{old: 'seek-right', oldsym: '1', new: 'seek-right', newsym: '1', dir: 1},
+							{old: 'seek-right', oldsym: '_', new: 'carry-left', newsym: '_', dir: -1},
+							{old: 'carry-left', oldsym: '0', new: 'halt', newsym: '1', dir: -1},
+							{old: 'carry-left', oldsym: '1', new: 'carry-left', newsym: '0', dir: -1}
+						], ['1', '0', '1', '0', '1', '0', '0', '1', '1']);
+						break;
+					case 'decrement':
+						tm = new Turing(page, 'ones', ['halt'], [
+							{old: 'ones', oldsym: '0', new: 'ones', newsym: '1', dir: 1},
+							{old: 'ones', oldsym: '1', new: 'ones', newsym: '0', dir: 1},
+							{old: 'ones', oldsym: '_', new: 'carry-left', newsym: '_', dir: -1},
+							{old: 'carry-left', oldsym: '0', new: 'seek-right', newsym: '1', dir: -1},
+							{old: 'carry-left', oldsym: '1', new: 'carry-left', newsym: '0', dir: -1},
+							{old: 'seek-right', oldsym: '0', new: 'seek-right', newsym: '0', dir: 1},
+							{old: 'seek-right', oldsym: '1', new: 'seek-right', newsym: '1', dir: 1},
+							{old: 'seek-right', oldsym: '_', new: 'ones-left', newsym: '_', dir: -1},
+							{old: 'ones-left', oldsym: '0', new: 'ones-left', newsym: '1', dir: -1},
+							{old: 'ones-left', oldsym: '1', new: 'ones-left', newsym: '0', dir: -1},
+							{old: 'ones-left', oldsym: '_', new: 'halt', newsym: '_', dir: -1}
+						], ['1', '0', '1', '0', '1', '0', '0', '0', '0']);
+						break;
+					}
+
+					alg = tm.execute();
+
 				}
 
 				function execute() {

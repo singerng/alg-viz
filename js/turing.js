@@ -1,4 +1,4 @@
-var TAPE_WIDTH = 20;
+var TAPE_WIDTH = 30;
 
 class Turing {
   constructor(page, start, accept, transitions, initial) {
