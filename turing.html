@@ -19,6 +19,8 @@
 			<select id="sort">
 				<option value="increment">Binary increment</option>
 				<option value="decrement">Binary decrement</option>
+				<option value="palindrome">Palindrome</option>
+				<option value="addition">Addition</option>
 			</select>
 
 			<button type="button" onclick="setup();" id="setup">Setup</button><br/><br/>
@@ -87,6 +89,76 @@
 							{old: 'ones-left', oldsym: '_', new: 'halt', newsym: '_', dir: -1}
 						], ['1', '0', '1', '0', '1', '0', '0', '0', '0']);
 						break;
+					case 'palindrome':
+						tm = new Turing(page, 'start', ['accept'], [
+							{old: 'start', oldsym: '0', new: 'seek-right-0-last-0', newsym: '_', dir: 1},
+							{old: 'start', oldsym: '1', new: 'seek-right-1-last-1', newsym: '_', dir: 1},
+							{old: 'start', oldsym: '_', new: 'accept', newsym: '_', dir: 1},
+							{old: 'seek-right-0-last-0', oldsym: '0', new: 'seek-right-0-last-0', newsym: '0', dir: 1},
+							{old: 'seek-right-0-last-0', oldsym: '1', new: 'seek-right-0-last-1', newsym: '1', dir: 1},
+							{old: 'seek-right-0-last-0', oldsym: '_', new: 'turn-left', newsym: '_', dir: -1},
+							{old: 'seek-right-0-last-1', oldsym: '0', new: 'seek-right-0-last-0', newsym: '0', dir: 1},
+							{old: 'seek-right-0-last-1', oldsym: '1', new: 'seek-right-0-last-1', newsym: '1', dir: 1},
+							{old: 'seek-right-1-last-0', oldsym: '0', new: 'seek-right-1-last-0', newsym: '0', dir: 1},
+							{old: 'seek-right-1-last-0', oldsym: '1', new: 'seek-right-1-last-1', newsym: '1', dir: 1},
+							{old: 'seek-right-1-last-1', oldsym: '0', new: 'seek-right-1-last-0', newsym: '0', dir: 1},
+							{old: 'seek-right-1-last-1', oldsym: '1', new: 'seek-right-1-last-1', newsym: '1', dir: 1},
+							{old: 'seek-right-1-last-1', oldsym: '_', new: 'turn-left', newsym: '_', dir: -1},
+							{old: 'turn-left', oldsym: '0', new: 'seek-left', newsym: '_', dir: -1},
+							{old: 'turn-left', oldsym: '1', new: 'seek-left', newsym: '_', dir: -1},
+							{old: 'turn-left', oldsym: '_', new: 'accept', newsym: '_', dir: -1},
+							{old: 'seek-left', oldsym: '0', new: 'seek-left', newsym: '0', dir: -1},
+							{old: 'seek-left', oldsym: '1', new: 'seek-left', newsym: '1', dir: -1},
+							{old: 'seek-left', oldsym: '_', new: 'start', newsym: '_', dir: 1},
+						], ['1', '0', '0', '0', '1', '1', '0', '0', '1']);
+						break;
+					case 'addition':
+							tm = new Turing(page, 'dec-flip-right', ['halt'], [
+								{old: 'dec-flip-right', oldsym: '0', new: 'dec-flip-right', newsym: '_', dir: 1},
+								{old: 'dec-flip-right', oldsym: '1', new: 'dec-flip-right-1', newsym: '0', dir: 1},
+								{old: 'dec-flip-right', oldsym: '_', new: 'halt', newsym: '_', dir: -1},
+								{old: 'dec-flip-right-1', oldsym: '0', new: 'dec-flip-right-1', newsym: '1', dir: 1},
+								{old: 'dec-flip-right-1', oldsym: '1', new: 'dec-flip-right-1', newsym: '0', dir: 1},
+								{old: 'dec-flip-right-1', oldsym: '_', new: 'dec-carry-left', newsym: '_', dir: -1},
+								{old: 'dec-carry-left', oldsym: '0', new: 'dec-seek-right-flip', newsym: '1', dir: -1},
+								{old: 'dec-carry-left', oldsym: '1', new: 'dec-carry-left', newsym: '0', dir: -1},
+								{old: 'dec-seek-right-flip', oldsym: '0', new: 'dec-seek-right-flip-seen', newsym: '0', dir: 1},
+								{old: 'dec-seek-right-flip', oldsym: '1', new: 'dec-seek-right-flip-seen', newsym: '1', dir: 1},
+								{old: 'dec-seek-right-flip', oldsym: '_', new: 'dec-seek-right-flip-seen', newsym: '_', dir: 1},
+								{old: 'dec-seek-right-flip-seen', oldsym: '0', new: 'dec-seek-right-flip-seen', newsym: '0', dir: 1},
+								{old: 'dec-seek-right-flip-seen', oldsym: '1', new: 'dec-seek-right-flip-seen', newsym: '1', dir: 1},
+								{old: 'dec-seek-right-flip-seen', oldsym: '_', new: 'dec-flip-left', newsym: '_', dir: -1},
+								{old: 'dec-flip-left', oldsym: '0', new: 'dec-flip-left', newsym: '1', dir: -1},
+								{old: 'dec-flip-left', oldsym: '1', new: 'dec-flip-left', newsym: '0', dir: -1},
+								{old: 'dec-flip-left', oldsym: '_', new: 'dec-seek-right', newsym: '_', dir: 1},
+								{old: 'dec-seek-right', oldsym: '0', new: 'dec-seek-right', newsym: '_', dir: 1},
+								{old: 'dec-seek-right', oldsym: '1', new: 'dec-seek-right-1', newsym: '1', dir: 1},
+								{old: 'dec-seek-right', oldsym: '_', new: 'inc-seek-right', newsym: '_', dir: 1},
+								{old: 'dec-seek-right-1', oldsym: '0', new: 'dec-seek-right-1', newsym: '0', dir: 1},
+								{old: 'dec-seek-right-1', oldsym: '1', new: 'dec-seek-right-1', newsym: '1', dir: 1},
+								{old: 'dec-seek-right-1', oldsym: '_', new: 'inc-seek-right', newsym: '_', dir: 1},
+								{old: 'dec-seek-left', oldsym: '0', new: 'dec-seek-left', newsym: '0', dir: -1},
+								{old: 'dec-seek-left', oldsym: '1', new: 'dec-seek-left', newsym: '1', dir: -1},
+								{old: 'dec-seek-left', oldsym: '_', new: 'dec-flip-right', newsym: '_', dir: 1},
+								{old: 'dec-shift-left', oldsym: '0', new: 'dec-shift-left-0', newsym: '_', dir: -1},
+								{old: 'dec-shift-left', oldsym: '1', new: 'dec-shift-left-1', newsym: '_', dir: -1},
+								{old: 'dec-shift-left-0', oldsym: '0', new: 'dec-shift-left-0', newsym: '0', dir: -1},
+								{old: 'dec-shift-left-0', oldsym: '1', new: 'dec-shift-left-1', newsym: '0', dir: -1},
+								{old: 'dec-shift-left-0', oldsym: '_', new: 'dec-flip-right', newsym: '0', dir: 1},
+								{old: 'dec-shift-left-1', oldsym: '0', new: 'dec-shift-left-0', newsym: '1', dir: -1},
+								{old: 'dec-shift-left-1', oldsym: '1', new: 'dec-shift-left-1', newsym: '1', dir: -1},
+								{old: 'dec-shift-left-1', oldsym: '_', new: 'dec-flip-right', newsym: '1', dir: 1},
+								{old: 'inc-seek-right', oldsym: '0', new: 'inc-seek-right', newsym: '0', dir: 1},
+								{old: 'inc-seek-right', oldsym: '1', new: 'inc-seek-right', newsym: '1', dir: 1},
+								{old: 'inc-seek-right', oldsym: '_', new: 'inc-carry-left', newsym: '_', dir: -1},
+								{old: 'inc-carry-left', oldsym: '0', new: 'inc-seek-left', newsym: '1', dir: -1},
+								{old: 'inc-carry-left', oldsym: '1', new: 'inc-carry-left', newsym: '0', dir: -1},
+								{old: 'inc-carry-left', oldsym: '_', new: 'dec-shift-left', newsym: '1', dir: -1},
+								{old: 'inc-seek-left', oldsym: '0', new: 'inc-seek-left', newsym: '0', dir: -1},
+								{old: 'inc-seek-left', oldsym: '1', new: 'inc-seek-left', newsym: '1', dir: -1},
+								{old: 'inc-seek-left', oldsym: '_', new: 'dec-seek-left', newsym: '_', dir: -1},
+							], ['1', '1', '_', '1', '0']);
+							break;
 					}
 
 					alg = tm.execute();

@@ -35,13 +35,30 @@ class _Container extends _Object {
 }
 
 class _Var extends _Object {
-  constructor(name, block, compressed, value) {
+  constructor(name, value, block=false, compressed=true, editable=true) {
     super(name, block, compressed);
     this.value = value;
+		this.editable = editable;
 
 		this.text.nodeValue = value;
     this.elem.appendChild(this.text);
   }
+
+	// set editable(x) {
+	// 	this._editable = x;
+	//
+	// 	if (x) {
+	// 		$(this.elem).click(function() {
+	// 			this.selected =
+	// 		});
+	// 	} else {
+	//
+	// 	}
+	// }
+	//
+	// get editable() {
+	// 	return this._editable;
+	// }
 
 	set value(value) {
 		if (this.text) this.text.nodeValue = value;
@@ -56,7 +73,7 @@ class _Var extends _Object {
 }
 
 function blank() {
-	return new _Var("", false, false, "_");
+	return new _Var("", "_", false, true, true);
 }
 
 class _Array extends _Object {
