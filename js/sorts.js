@@ -7,7 +7,7 @@ class Sort {
     this.page = page;
 
     /* Construct the objects */
-    this.list = new _List("Numbers", true, false);
+    this.list = new _List("Numbers", true, false, 30);
     this.status = new _Container("Status", true, false);
     this.cmps = new _Var("Comparisons", true, true, 0);
     this.xchgs = new _Var("Exchanges", true, true, 0);

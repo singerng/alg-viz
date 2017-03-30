@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Turing Machine Simulator</title>
+
+		<script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" type="text/css" href="css/styles.css">
+        <script type="text/javascript" src="js/alg-viz.js"></script>
+        <script type="text/javascript" src="js/turing.js"></script>
+
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+    </head>
+
+	<body class="noselect">
+		<h1>Turing Machines</h1>
+
+		<h3>Controls</h3>
+			<label for="delay">Delay between steps (ms):</label> <input type="number" value="1000" id="delay"/><br/>
+
+			<div class="controls">
+				<button type="button" onclick="advance();" id="step">Step</button>
+				<button type="button" onclick="toggle_animation();" id="animation">Play</button>
+				<button type="button" onclick="execute();" id="execute">Execute completely</button>
+			</div>
+
+		<div id="algorithm"></div>
+
+	    <script type="text/javascript">
+				var page = new _Page();
+
+				var turing, alg;
+
+				turing = new Turing(page, [], [
+					{old: 'start', oldsym: '--', new: 'state1', newsym: '0', dir: -1}
+				]);
+				alg = turing.execute();
+
+	      document.onkeypress = function(e) {
+	        if (e.charCode == 32) {
+	          advance();
+						return false;
+	        }
+	      };
+
+		    function advance() {
+		      return alg.next().done;
+		    }
+
+				var timer;
+				function toggle_animation() {
+					if (!timer) timer = window.setInterval(advance, $('#delay').val());
+					else {
+						window.clearInterval(timer);
+						timer = 0;
+					}
+				}
+
+				function execute() {
+					while (!advance());
+				}
+
+	    </script>
+	</body>
+</html>
